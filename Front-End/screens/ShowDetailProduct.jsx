@@ -149,6 +149,7 @@ const ShowDetailofProduct = ({ route, navigation }) => {
   };
 
   // ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงวันที่หมดอายุ
+  //
   const onChangeExpirationDate = (event, selectedDate) => {
     const currentDate = selectedDate || tempExpirationDate;
     setTempExpirationDate(currentDate);
