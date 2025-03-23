@@ -155,7 +155,6 @@ const ShowDetailofProduct = ({ route, navigation }) => {
   };
 
   // ฟังก์ชันสำหรับยืนยันวันที่หมดอายุ
-  //
   const confirmExpirationDate = () => {
     setEditedProduct({
       ...editedProduct,
