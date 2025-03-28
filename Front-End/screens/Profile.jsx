@@ -52,9 +52,9 @@ const ProfileScreen = () => {
         .catch(error => {
           console.error("API Error:", error.response ? error.response.data : error.message);
           if (error.response && error.response.data.message === "User not found") {
-            Alert.alert("User Not Found", "No user data found for this userId"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+            Alert.alert("User Not Found", "No user data found for this userId");
           } else {
-            Alert.alert("Error", "Unable to fetch user data"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+            Alert.alert("Error", "Unable to fetch user data");
           }
         });
     }
@@ -63,7 +63,7 @@ const ProfileScreen = () => {
   // ฟังก์ชันบันทึกชื่อที่แก้ไข
   const saveName = async () => {
     if (!userId) {
-      Alert.alert("Incomplete Data", "userId not found"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+      Alert.alert("Incomplete Data", "userId not found");
       return;
     }
     try {
@@ -71,18 +71,18 @@ const ProfileScreen = () => {
         user_id: userId,
         name: name,
       });
-      Alert.alert("Success", "Your name has been updated"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+      Alert.alert("Success", "Your name has been updated");
       setIsEditing(false);
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "Unable to update name"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+      Alert.alert("Error", "Unable to update name");
     }
   };
 
   // ฟังก์ชันสำหรับลบบัญชี
   const deleteAccount = async () => {
     if (!userId) {
-      Alert.alert("Incomplete Data", "userId not found"); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+      Alert.alert("Incomplete Data", "userId not found");
       return;
     }
   
@@ -99,12 +99,12 @@ const ProfileScreen = () => {
                 data: { user_id: userId },
               });
               if (response.status === 200) {
-                Alert.alert('Success', 'Your account has been deleted'); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+                Alert.alert('Success', 'Your account has been deleted');
                 navigation.navigate("Login"); // กลับไปที่หน้าล็อกอินหลังลบบัญชี
               }
             } catch (error) {
               console.error(error);
-              Alert.alert('Error', 'Failed to delete account'); // ✅ เปลี่ยนข้อความเป็นภาษาอังกฤษ
+              Alert.alert('Error', 'Failed to delete account');
             }
           }
         },

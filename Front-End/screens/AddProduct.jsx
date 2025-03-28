@@ -85,9 +85,23 @@ const AddProductScreen = ({ navigation }) => {
 
   // ฟังก์ชันสำหรับอัปโหลดรูปภาพไปยังเซิร์ฟเวอร์
   const uploadImage = async (uri) => {
+    // let ประกาศตัวแปโดยมีขอบเขตการใช้งานภายใน block
+    // สร้างอ็อบเจ็กต์ FormData เพื่อใช้เก็บข้อมูลแบบฟอร์ม (มักใช้สำหรับการอัปโหลดไฟล์)
     let formData = new FormData();
+
+    // ดึงชื่อไฟล์จาก URI โดย:
+    // 1. แยก URI ออกเป็นส่วนๆ ด้วยเครื่องหมาย "/"
+    // 2. เลือกส่วนสุดท้ายซึ่งเป็นชื่อไฟล์ด้วย .pop()
     let filename = uri.split("/").pop();
+
+    // ตรวจสอบนามสกุลไฟล์ด้วย Regular Expression:
+    // - \.(\w+)$ หาส่วนขยายไฟล์ (ตัวอักษร 1 ตัวขึ้นไปหลังจุด)
+    // - .exec() ใช้ค้นหาค่าที่ตรงกับ pattern
     let match = /\.(\w+)$/.exec(filename);
+
+    // กำหนดประเภทไฟล์:
+    // - ถ้ามีส่วนขยาย (match เป็นจริง) ใช้รูปแบบ image/[นามสกุล] เช่น image/jpeg
+    // - ถ้าไม่มีส่วนขยาย กำหนดเป็น image โดย default
     let type = match ? `image/${match[1]}` : `image`;
 
     formData.append("file", { uri, name: filename, type });
@@ -96,7 +110,7 @@ const AddProductScreen = ({ navigation }) => {
       let response = await axios.post(
         "https://fuzzy-space-giggle-pjw99rqj6ww5hgrg-5000.app.github.dev/upload",
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        { headers: { "Content-Type": "multipart/form-data" } }// ระบุว่าเรากำลังส่งข้อมูลในรูปแบบ แบบฟอร์มที่มีหลายส่วน
       );
 
       if (response.data.file_url) {
@@ -117,7 +131,7 @@ const AddProductScreen = ({ navigation }) => {
 
   // ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงวันหมดอายุ
   const onChangeExpirationDate = (event, selectedDate) => {
-    const currentDate = selectedDate || expirationDate;
+    const currentDate = selectedDate || expirationDate;// ถ้ามี selectedDate (ผู้ใช้เลือกวันที่ใหม่) จะใช้ค่านั้น ถ้าไม่มี (selectedDate เป็น null หรือ undefined) จะใช้ค่าเดิมจาก expirationDate
     setExpirationDate(currentDate);
   };
 
@@ -142,7 +156,7 @@ const AddProductScreen = ({ navigation }) => {
     const productData = {
       name: userName,
       storage: selectedStorage,
-      storage_date: storageDate.toISOString().split("T")[0],
+      storage_date: storageDate.toISOString().split("T")[0], // แยกส่วนวันที่จาก ISO String ครับ
       expiration_date: expirationDate.toISOString().split("T")[0],
       quantity: parseInt(quantity),
       note: note,
@@ -159,51 +173,51 @@ const AddProductScreen = ({ navigation }) => {
       );
 
       // ตรวจสอบผลลัพธ์จากเซิร์ฟเวอร์
-      if (response.status === 201) {
+      if (response.status === 201) { // เป็นการตรวจสอบ HTTP Status Code ที่เซิร์ฟเวอร์ส่งกลับมา โดยเฉพาะรหัส 201 Created
         Alert.alert("สำเร็จ", "สินค้าถูกเพิ่มเรียบร้อยแล้ว", [
           { text: "ตกลง", onPress: () => navigation.goBack() },
         ]);
       } else {
         Alert.alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
       }
-    //จัดการข้อผิดพลาด
+      //จัดการข้อผิดพลาด
     } catch (error) { //จับข้อผิดพลาดที่เกิดขึ้นระหว่างการส่ง Request
       console.error("Error saving product:", error);//แสดงข้อผิดพลาดใน Console เพื่อ Debug
       Alert.alert("เกิดข้อผิดพลาด", "ไม่สามารถบันทึกข้อมูลได้");
     }
   };
 
-   // State สำหรับควบคุมการแสดง Date Picker
-   const [showStorageDatePicker, setShowStorageDatePicker] = useState(false);
-   const [showExpirationDatePicker, setShowExpirationDatePicker] = useState(false);
- 
-   // ฟังก์ชันสำหรับแสดง Date Picker
-   const showDatepicker = (type) => {
-     if (type === "storage") {
-       setShowExpirationDatePicker(false);
-       setShowStorageDatePicker(true);
-     } else if (type === "expiration") {
-       setShowStorageDatePicker(false);
-       setShowExpirationDatePicker(true);
-     }
-   };
+  // State สำหรับควบคุมการแสดง Date Picker
+  const [showStorageDatePicker, setShowStorageDatePicker] = useState(false);
+  const [showExpirationDatePicker, setShowExpirationDatePicker] = useState(false);
+
+  // ฟังก์ชันสำหรับแสดง Date Picker
+  const showDatepicker = (type) => {
+    if (type === "storage") {
+      setShowExpirationDatePicker(false);
+      setShowStorageDatePicker(true);
+    } else if (type === "expiration") {
+      setShowStorageDatePicker(false);
+      setShowExpirationDatePicker(true);
+    }
+  };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView //ช่วยจัดการเลย์เอาต์เมื่อคีย์บอร์ดโผล่ขึ้นมา โดยปรับตำแหน่งของวิวเพื่อป้องกันไม่ให้คีย์บอร์ดบังส่วนอินพุต (Input) หรือเนื้อหาสำคัญบนหน้าจอ
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
     >
-    {/* KeyboardAvoidingView: ช่วยเลื่อนหน้าจอเมื่อแป้นพิมพ์แสดงขึ้น */}
-    {/* behavior: กำหนดพฤติกรรมการเลื่อนหน้าจอ (iOS ใช้ "padding", Android ใช้ "height") */}
-    {/* keyboardVerticalOffset: กำหนดระยะห่างจากแป้นพิมพ์ (เฉพาะ iOS) */}
+      {/* KeyboardAvoidingView: ช่วยเลื่อนหน้าจอเมื่อแป้นพิมพ์แสดงขึ้น */}
+      {/* behavior: กำหนดพฤติกรรมการเลื่อนหน้าจอ (iOS ใช้ "padding", Android ใช้ "height") */}
+      {/* keyboardVerticalOffset: กำหนดระยะห่างจากแป้นพิมพ์ (เฉพาะ iOS) */}
 
       <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
-      {/* ScrollView: ทำให้หน้าจอเลื่อนได้เมื่อมีเนื้อหามาก */}
-      {/* keyboardShouldPersistTaps="handled": ป้องกันแป้นพิมพ์ปิดเมื่อกดพื้นที่อื่น */}
+        {/* ScrollView: ทำให้หน้าจอเลื่อนได้เมื่อมีเนื้อหามาก */}
+        {/* keyboardShouldPersistTaps="handled": ป้องกันแป้นพิมพ์ปิดเมื่อกดพื้นที่อื่น */}
 
         <View style={styles.container}>
           {/* View: เป็น Container หลักของหน้าจอ */}
@@ -220,11 +234,11 @@ const AddProductScreen = ({ navigation }) => {
             <Text style={styles.title}>New Product</Text>
             {/* Text: แสดงข้อความ "New Product" */}
             <TouchableOpacity onPress={saveProduct}>
-            {/* TouchableOpacity: ปุ่มสำหรับบันทึกข้อมูล */}
-            <Text style={styles.saveText}>Save</Text>
-            {/* Text: แสดงข้อความ "Save" */}
-          </TouchableOpacity>
-        </View>
+              {/* TouchableOpacity: ปุ่มสำหรับบันทึกข้อมูล */}
+              <Text style={styles.saveText}>Save</Text>
+              {/* Text: แสดงข้อความ "Save" */}
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity onPress={pickImage}>
             {/* TouchableOpacity: ปุ่มสำหรับเลือกรูปภาพ */}
@@ -235,133 +249,133 @@ const AddProductScreen = ({ navigation }) => {
               ) : (
                 <Text style={styles.imagePlaceholderText}>Tap to add image</Text>
               )}
-                {/* Image: แสดงรูปภาพที่ผู้ใช้เลือก */}
-                {/* Text: แสดงข้อความ "Tap to add image" ถ้ายังไม่มีรูปภาพ */}
+              {/* Image: แสดงรูปภาพที่ผู้ใช้เลือก */}
+              {/* Text: แสดงข้อความ "Tap to add image" ถ้ายังไม่มีรูปภาพ */}
 
             </View>
           </TouchableOpacity>
 
           <View style={[styles.formContainer, isKeyboardVisible && styles.formContainerShifted]}>
-          {/* View: Container สำหรับฟอร์มกรอกข้อมูล */}
-          {/* isKeyboardVisible && styles.formContainerShifted: เลื่อนฟอร์มขึ้นเมื่อแป้นพิมพ์แสดงขึ้น */}
+            {/* View: Container สำหรับฟอร์มกรอกข้อมูล */}
+            {/* isKeyboardVisible && styles.formContainerShifted: เลื่อนฟอร์มขึ้นเมื่อแป้นพิมพ์แสดงขึ้น */}
 
-          <Text style={styles.label}>Name</Text>
-          {/* Text: แสดงข้อความ "Name" */}
-          <TextInput
-            style={styles.input}
-            placeholder="Enter product name"
-            value={userName}
-            onChangeText={(text) => setUserName(text)}
-            placeholderTextColor="#B0B0B0"
-          />
-          {/* TextInput: ช่องกรอกชื่อสินค้า */}
+            <Text style={styles.label}>Name</Text>
+            {/* Text: แสดงข้อความ "Name" */}
+            <TextInput
+              style={styles.input}
+              placeholder="Enter product name"
+              value={userName}
+              onChangeText={(text) => setUserName(text)}
+              placeholderTextColor="#B0B0B0"
+            />
+            {/* TextInput: ช่องกรอกชื่อสินค้า */}
 
-          <Text style={styles.label}>Storage</Text>
-          {/* Text: แสดงข้อความ "Storage" */}
-          <DropDownPicker
-            open={open}
-            setOpen={setOpen}
-            value={selectedStorage}
-            setValue={setSelectedStorage}
-            items={[
-              { label: "Fridge", value: "fridge" },
-              { label: "Freezer", value: "freezer" },
-              { label: "Dry Food", value: "dry_food" },
-            ]}
-            placeholder="Select Storage"
-            style={styles.picker}
-            dropDownContainerStyle={styles.dropDownStyle}
-          />
-          {/* DropDownPicker: Dropdown สำหรับเลือกสถานที่เก็บสินค้า */}
+            <Text style={styles.label}>Storage</Text>
+            {/* Text: แสดงข้อความ "Storage" */}
+            <DropDownPicker
+              open={open}
+              setOpen={setOpen}
+              value={selectedStorage}
+              setValue={setSelectedStorage}
+              items={[
+                { label: "Fridge", value: "fridge" },
+                { label: "Freezer", value: "freezer" },
+                { label: "Dry Food", value: "dry_food" },
+              ]}
+              placeholder="Select Storage"
+              style={styles.picker}
+              dropDownContainerStyle={styles.dropDownStyle}
+            />
+            {/* DropDownPicker: Dropdown สำหรับเลือกสถานที่เก็บสินค้า */}
 
-          <Text style={styles.label}>Storage Date</Text>
-          {/* Text: แสดงข้อความ "Storage Date" */}
-          <TouchableOpacity style={styles.dateInput} onPress={() => showDatepicker("storage")}>
-            {/* TouchableOpacity: ปุ่มสำหรับเลือกวันที่เก็บสินค้า */}
-            <Text style={{ flex: 1 }}>{storageDate.toLocaleDateString()}</Text>
-            {/* Text: แสดงวันที่เก็บสินค้า */}
-            <Ionicons name="calendar-outline" size={20} color="gray" />
-            {/* Ionicons: ไอคอนรูปปฏิทิน */}
-          </TouchableOpacity>
+            <Text style={styles.label}>Storage Date</Text>
+            {/* Text: แสดงข้อความ "Storage Date" */}
+            <TouchableOpacity style={styles.dateInput} onPress={() => showDatepicker("storage")}>
+              {/* TouchableOpacity: ปุ่มสำหรับเลือกวันที่เก็บสินค้า */}
+              <Text style={{ flex: 1 }}>{storageDate.toLocaleDateString()}</Text>
+              {/* Text: แสดงวันที่เก็บสินค้า */}
+              <Ionicons name="calendar-outline" size={20} color="gray" />
+              {/* Ionicons: ไอคอนรูปปฏิทิน */}
+            </TouchableOpacity>
 
-          <Text style={styles.label}>Expiration Date</Text>
-          {/* Text: แสดงข้อความ "Expiration Date" */}
-          <TouchableOpacity style={styles.dateInput} onPress={() => showDatepicker("expiration")}>
-            {/* TouchableOpacity: ปุ่มสำหรับเลือกวันหมดอายุ */}
-            <Text style={{ flex: 1 }}>{expirationDate.toLocaleDateString()}</Text>
-            {/* Text: แสดงวันหมดอายุ */}
-            <Ionicons name="calendar-outline" size={20} color="gray" />
-            {/* Ionicons: ไอคอนรูปปฏิทิน */}
-          </TouchableOpacity>
+            <Text style={styles.label}>Expiration Date</Text>
+            {/* Text: แสดงข้อความ "Expiration Date" */}
+            <TouchableOpacity style={styles.dateInput} onPress={() => showDatepicker("expiration")}>
+              {/* TouchableOpacity: ปุ่มสำหรับเลือกวันหมดอายุ */}
+              <Text style={{ flex: 1 }}>{expirationDate.toLocaleDateString()}</Text>
+              {/* Text: แสดงวันหมดอายุ */}
+              <Ionicons name="calendar-outline" size={20} color="gray" />
+              {/* Ionicons: ไอคอนรูปปฏิทิน */}
+            </TouchableOpacity>
 
-          <Text style={styles.label}>Quantity</Text>
-          {/* Text: แสดงข้อความ "Quantity" */}
-          <TextInput
-            style={styles.input}
-            placeholder="Enter quantity"
-            value={quantity}
-            onChangeText={setQuantity}
-            keyboardType="numeric"
-            placeholderTextColor="#B0B0B0"
-          />
-          {/* TextInput: ช่องกรอกจำนวนสินค้า */}
+            <Text style={styles.label}>Quantity</Text>
+            {/* Text: แสดงข้อความ "Quantity" */}
+            <TextInput
+              style={styles.input}
+              placeholder="Enter quantity"
+              value={quantity}
+              onChangeText={setQuantity}
+              keyboardType="numeric"
+              placeholderTextColor="#B0B0B0"
+            />
+            {/* TextInput: ช่องกรอกจำนวนสินค้า */}
 
-          <Text style={styles.label}>Note</Text>
-          {/* Text: แสดงข้อความ "Note" */}
-          <TextInput
-            style={[styles.input, styles.noteInput]}
-            placeholder="Notes"
-            multiline
-            value={note}
-            onChangeText={setNote}
-            placeholderTextColor="#B0B0B0"
-          />
-          {/* TextInput: ช่องกรอกโน๊ตเพิ่มเติม (หลายบรรทัด) */}
+            <Text style={styles.label}>Note</Text>
+            {/* Text: แสดงข้อความ "Note" */}
+            <TextInput
+              style={[styles.input, styles.noteInput]}
+              placeholder="Notes"
+              multiline
+              value={note}
+              onChangeText={setNote}
+              placeholderTextColor="#B0B0B0"
+            />
+            {/* TextInput: ช่องกรอกโน๊ตเพิ่มเติม (หลายบรรทัด) */}
+          </View>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
 
-    {showStorageDatePicker && (
-      <View style={styles.dateTimePickerStorageContainer}>
-        {/* View: Container สำหรับ Date Picker ของวันที่เก็บสินค้า */}
-        <DateTimePicker
-          value={storageDate}
-          mode="date"
-          display="spinner"
-          textColor="black"
-          onChange={onChangeStorageDate}
-          style={styles.dateTimePicker}
-        />
-        {/* DateTimePicker: ตัวเลือกวันที่เก็บสินค้า */}
-        <TouchableOpacity style={styles.confirmButton} onPress={() => setShowStorageDatePicker(false)}>
-          {/* TouchableOpacity: ปุ่มสำหรับยืนยันวันที่ */}
-          <Text style={styles.confirmText}>Confirm Date</Text>
-          {/* Text: แสดงข้อความ "Confirm Date" */}
-        </TouchableOpacity>
-      </View>
-    )}
+      {showStorageDatePicker && (
+        <View style={styles.dateTimePickerStorageContainer}>
+          {/* View: Container สำหรับ Date Picker ของวันที่เก็บสินค้า */}
+          <DateTimePicker
+            value={storageDate}
+            mode="date"
+            display="spinner"
+            textColor="black"
+            onChange={onChangeStorageDate}
+            style={styles.dateTimePicker}
+          />
+          {/* DateTimePicker: ตัวเลือกวันที่เก็บสินค้า */}
+          <TouchableOpacity style={styles.confirmButton} onPress={() => setShowStorageDatePicker(false)}>
+            {/* TouchableOpacity: ปุ่มสำหรับยืนยันวันที่ */}
+            <Text style={styles.confirmText}>Confirm Date</Text>
+            {/* Text: แสดงข้อความ "Confirm Date" */}
+          </TouchableOpacity>
+        </View>
+      )}
 
-    {showExpirationDatePicker && (
-      <View style={styles.dateTimePickerExpirationContainer}>
-        {/* View: Container สำหรับ Date Picker ของวันหมดอายุ */}
-        <DateTimePicker
-          value={expirationDate}
-          mode="date"
-          display="spinner"
-          textColor="black"
-          onChange={onChangeExpirationDate}
-          style={[styles.dateTimePicker, { height: 150 }]}
-        />
-        {/* DateTimePicker: ตัวเลือกวันหมดอายุ */}
-        <TouchableOpacity style={styles.confirmButton} onPress={() => setShowExpirationDatePicker(false)}>
-          {/* TouchableOpacity: ปุ่มสำหรับยืนยันวันที่ */}
-          <Text style={styles.confirmText}>Confirm Date</Text>
-          {/* Text: แสดงข้อความ "Confirm Date" */}
-        </TouchableOpacity>
-      </View>
-    )}
-  </KeyboardAvoidingView>
- );
+      {showExpirationDatePicker && (
+        <View style={styles.dateTimePickerExpirationContainer}>
+          {/* View: Container สำหรับ Date Picker ของวันหมดอายุ */}
+          <DateTimePicker
+            value={expirationDate}
+            mode="date"
+            display="spinner"
+            textColor="black"
+            onChange={onChangeExpirationDate}
+            style={[styles.dateTimePicker, { height: 150 }]}
+          />
+          {/* DateTimePicker: ตัวเลือกวันหมดอายุ */}
+          <TouchableOpacity style={styles.confirmButton} onPress={() => setShowExpirationDatePicker(false)}>
+            {/* TouchableOpacity: ปุ่มสำหรับยืนยันวันที่ */}
+            <Text style={styles.confirmText}>Confirm Date</Text>
+            {/* Text: แสดงข้อความ "Confirm Date" */}
+          </TouchableOpacity>
+        </View>
+      )}
+    </KeyboardAvoidingView>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -383,11 +397,11 @@ const styles = StyleSheet.create({
   },
   //ส่วนหัวของหน้าจอ (มีปุ่ม Cancel, Title, และ Save)
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginTop: 20,
+    flexDirection: "row",           // จัดเรียงองค์ประกอบลูกในแนวนอน (ซ้ายไปขวา)
+    justifyContent: "space-between", // กระจายองค์ประกอบด้วยช่องว่างระหว่างวัตถุเท่าๆ กัน
+    alignItems: "center",           // จัดองค์ประกอบลูกให้อยู่กึ่งกลางในแนวตั้ง
+    paddingHorizontal: 20,          // กำหนดช่องว่างด้านซ้าย-ขวา 20 หน่วย
+    marginTop: 20,                  // กำหนดช่องว่างด้านบน 20 หน่วย
   },
   cancelText: { fontSize: 16, color: "red", fontWeight: "bold" },//สไตล์ข้อความปุ่ม Cancel
   saveText: { fontSize: 16, color: "blue", fontWeight: "bold" },//สไตล์ข้อความปุ่ม Save
@@ -415,7 +429,7 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
-    elevation: 3,
+    elevation: 3, // กำหนดความสูงของเงาทำให้องค์ประกอบดูเหมือน "ลอย" ขึ้นมาจากพื้นหลัง
   },
   //สไตล์สำหรับเลื่อนฟอร์มขึ้นเมื่อแป้นพิมพ์แสดงขึ้น
   formContainerShifted: {
@@ -460,12 +474,12 @@ const styles = StyleSheet.create({
   },
   //สไตล์ Container ของ Date Picker สำหรับวันที่เก็บสินค้า
   dateTimePickerStorageContainer: {
-    position: "absolute",
+    position: "absolute", //เหมาะสำหรับการสร้างองค์ประกอบที่ต้องการวางทับบนอื่นๆ หรือต้องการควบคุมตำแหน่งอย่างแม่นยำในหน้าจอ
     top: "60%",
     left: "5%",
     backgroundColor: "white",
     borderRadius: 20,
-    zIndex: 10,
+    zIndex: 10, //กำหนด ลำดับชั้นการซ้อนทับ
     padding: 10,
   },
   // สไตล์ Container ของ Date Picker สำหรับวันหมดอายุ

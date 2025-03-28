@@ -4,7 +4,7 @@ import {
   ActivityIndicator, Alert, Dimensions
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import axios from "axios";
+import axios from "axios"; //เป็น HTTP client library ที่นิยมใช้สำหรับการเรียก API
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from "@expo/vector-icons";
 
@@ -145,7 +145,7 @@ const AllProductScreen = ({ navigation }) => {
       {/* ปุ่มเรียงลำดับสินค้า */}
       <TouchableOpacity style={styles.sortButton} onPress={toggleSortOrder}>
         <Ionicons
-          name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
+          name={sortOrder === "asc" ? "arrow-up" : "arrow-down"} // ถ้า sortOrder เป็น "asc" จะแสดงไอคอน ลูกศรชี้ขึ้น (↑)
           size={24}
           color="#fff"
         />

@@ -96,22 +96,22 @@ export default function App() {
   return (
     <View style={{ flex: 1, backgroundColor: "#F7F6FB", padding: 20 }}>
       {/* Header Section */}
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 20, marginTop: 5 }}>
+      <View style={{ flexDirection: "row" /*จัดเรียงในแนวนอน*/, alignItems: "center", justifyContent: "space-between"/*จัดองค์ประกอบให้ห่างกัน*/, marginBottom: 20, marginTop: 5 /*เพิ่มระยะห่างด้านล่างและด้านบน*/ }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity
             style={{
               backgroundColor: "#4D5A9C",
-              borderRadius: 50,
-              padding: 8,
+              borderRadius: 50, //สี่เหลี่ยมมุมโค้ง
+              padding: 8, //เว้นช่องภายในกรอบ
               width: 35,
               height: 35,
-              justifyContent: "center",
-              alignItems: "center",
+              justifyContent: "center", //อยู่ตรงกลางในแนวตั้ง
+              alignItems: "center", //อยู่ตรงกลางในแนวนอน
               shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              shadowRadius: 3,
-              elevation: 4,
+              shadowOffset: { width: 0, height: 2 }, //เงาจะอยู่ต่ำกว่า 2 พิกเซล
+              shadowOpacity: 0.1, //ความเข้มของเงา
+              shadowRadius: 3, //กระจายเงา
+              elevation: 4, //เพิ่มเอฟเฟกต์เงาสำหรับ Android (เพราะ Android ไม่รองรับ shadowColor)
             }}
           >
             <Image
@@ -123,9 +123,9 @@ export default function App() {
             style={{
               backgroundColor: "white",
               borderRadius: 50,
-              paddingHorizontal: 12,
-              paddingVertical: 6,
-              marginLeft: 10,
+              paddingHorizontal: 12, //เพิ่มระยะห่างภายในด้านซ้ายและขวา (แนวนอน)
+              paddingVertical: 6, //เพิ่มระยะห่างภายในด้านบนและล่าง (แนวตั้ง)
+              marginLeft: 10, //เว้นระยะห่างของจากด้านซ้าย
               shadowColor: "#000",
               shadowOffset: { width: 0, height: 1 },
               shadowOpacity: 0.1,
@@ -153,7 +153,7 @@ export default function App() {
             shadowRadius: 3,
             elevation: 4,
           }}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("Login")} //เปลี่ยนไปที่หน้า Login
         >
           <Image
             source={require("../assets/images/exit.png")}
@@ -166,17 +166,18 @@ export default function App() {
       <ScrollView>
         <View style={{ marginVertical: 10, marginTop: 30 }}>
           <LinearGradient colors={["#FEC2D6", "#FEE5E1"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ padding: 8, borderRadius: 30 }}>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View style={{ flexDirection: "row", alignItems: "center" }} /*จัดวางไอคอนและข้อความให้อยู่ในแนวนอน*/ > 
               <Image source={require("../assets/images/N.png")} style={{ width: 25, height: 25, marginRight: 8 }} />
               <Text style={{ fontWeight: "bold", fontSize: 16, color: "#E72828" }}>Nearly expired</Text>
             </View>
           </LinearGradient>
           <View style={{ backgroundColor: "#FCFCFF", borderRadius: 20, padding: 15, marginTop: 10, height: 120, elevation: 5 }}>
-            {nearlyExpired.length === 0 ? (
+            {nearlyExpired.length === 0 ? ( //ถ้าไม่มีสินค้าใกล้หมดอายุ แสดงข้อความ "There are no products"
               <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ fontSize: 16, color: "#7C0A0A" }}>There are no products.</Text>
               </View>
             ) : (
+              //เลื่อนดูสินค้าด้านข้าง ซ้ายขวา
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {nearlyExpired.map((item) => (
                   <TouchableOpacity
@@ -235,9 +236,9 @@ export default function App() {
           </LinearGradient>
           <View style={{ margin: 10, marginBottom: 130 }}>
             <Card style={{ padding: 1, borderRadius: 30, overflow: "hidden" }}>
-              {storage.map((item, idx) => (
+              {storage.map((item, idx) => ( //ช่วยสร้างUI สร้างรายการที่แสดงผลจากข้อมูลใน storage
                 <TouchableOpacity key={idx} onPress={() => navigation.navigate(item.screen)}>
-                  <View style={{ flexDirection: "row", alignItems: "center", padding: 1, borderBottomWidth: idx !== storage.length - 1 ? 1 : 0, borderBottomColor: "#E0E0E0" }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", padding: 1, borderBottomWidth: idx !== storage.length - 1 ? 1 : 0 /*ถ้ายังไม่ใช่รายการสุดท้ายมีเส้นแบ่ง ถ้าเป็นรายการสุดท้ายไม่มีเส้นแบ่ง*/, borderBottomColor: "#E0E0E0" }}>
                     <Image source={item.image} style={{ width: 55, height: 55, marginRight: 1 }} />
                     <Text style={{ fontSize: 16, fontWeight: "normal", flex: 1 }}>{item.name}</Text>
                     <View style={{ backgroundColor: "#6C74FF", borderRadius: 50, width: 20, height: 20, marginRight: 20, justifyContent: "center", alignItems: "center" }}>
@@ -255,7 +256,7 @@ export default function App() {
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 0, marginTop: 0 }}>
         <View
           style={{
-            position: "absolute",
+            position: "absolute", //เหมือนกับการลอยขึ้นไปอยู่คนละlayer
             bottom: -290,
             left: -210,
             right: -210,
@@ -263,7 +264,7 @@ export default function App() {
             backgroundColor: "#FFF",
             borderTopLeftRadius: 500,
             borderTopRightRadius: 500,
-            overflow: "hidden",
+            overflow: "hidden", //ซ่อนเนื้อหาที่เกินขอบของ
             shadowColor: "#000",
             shadowOffset: { width: 0, height: -3 },
             shadowOpacity: 0.1,
@@ -279,7 +280,7 @@ export default function App() {
             bottom: 0,
             width: "100%",
             flexDirection: "row",
-            justifyContent: "space-evenly",
+            justifyContent: "space-evenly", //ระยะห่างเท่ากันทั้งด้านหน้าและด้านหลัง
             paddingHorizontal: 0,
             alignItems: "center",
           }}
@@ -311,7 +312,7 @@ export default function App() {
             padding: 4,
             height: 45,
             width: 45,
-            justifyContent: "center",
+            justifyContent: "center", 
             alignItems: "center",
           }}
           onPress={() => navigation.navigate("AddProduct")}
